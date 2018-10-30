@@ -1,0 +1,13 @@
+{
+  "author": "",
+  "name": "react-websocket-session",
+  "version": "0.0.0",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "~4.14.1",
+    "express-session": "~1.15.1",
+    "uuid": "~3.0.1",
+    "ws": "^5.1.0"
+  }
+}
