@@ -18,7 +18,7 @@ class Create extends Component {
         if(typeof msg !== "string") {
           msg = JSON.stringify(msg);
         }
-        console.log(msg);
+        // console.log(msg);
     };
     creatCode = (event)=>{
         let msg = {type:'set-code',msg:this.refs.codeInput.value}

@@ -1,23 +1,29 @@
 import React, { Component } from 'react';
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import {loadCatagoriesAction,loadQuistionsAction} from "../actions/index"
 
 class Quistions extends Component {
     
     render() { 
+        console.log(this.props.quistions);
         return ( 
         <div className="mt border border-primary col-sm-12 row">
-            <h2 className="col-sm-4">quistion 1</h2>
-            <h2 className="col-sm-4">quistion 1</h2>
-            <h2 className="col-sm-4">quistion 1</h2>
-            <h2 className="col-sm-4">quistion 1</h2>
-            <h2 className="col-sm-4">quistion 1</h2>
-            <h2 className="col-sm-4">quistion 1</h2>
-            <h2 className="col-sm-4">quistion 1</h2>
-            <h2 className="col-sm-4">quistion 1</h2>
-            <h2 className="col-sm-4">quistion 1</h2>
-            <h2 className="col-sm-4">quistion 1</h2>
+            {this.props.quistions.map((quistionGroup)=>{<div className="col-sm-4">{quistionGroup[0]}</div>})}
         </div> 
         );
     }
 }
- 
-export default Quistions;
+const mapStateToProps = state => {
+    return {
+        quistions : state.appReducer.quistions,
+    };
+  };
+  const matchDispatchToProps = dispatch => {
+    return bindActionCreators({ loadCatagoriesAction,loadQuistionsAction }, dispatch);
+  };
+  
+  export default connect(
+    mapStateToProps,
+    matchDispatchToProps
+  )(Quistions);

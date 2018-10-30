@@ -5,10 +5,6 @@ import {acceptOrReject} from "../actions/index"
 import { getWebSocket} from '../data/serverCommunication';
 
 class AcceptPlayer extends Component {
-    constructor(props){
-        super(props);
-        
-    }
     acceptRejectPlayer = (status)=>{
         let msg = {type:status,id:this.props.id}
         msg  = JSON.stringify(msg);

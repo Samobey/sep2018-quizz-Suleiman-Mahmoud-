@@ -1,19 +1,30 @@
 import React, { Component } from 'react';
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import {loadCatagoriesAction,loadQuistionsAction} from "../actions/index"
 
-class ListPlayers extends Component {
+class CatagoryList extends Component { 
     
     render() { 
         return ( 
         <div className="border border-primary list col-sm-8">
-            <h2>catagory 1</h2>
-            <h2>catagory 2</h2>
-            <h2>catagory 3</h2>
-            <h2>catagory 4</h2>
-            <h2>catagory 5</h2>
-            <h2>catagory 6</h2>
+            {
+                this.props.catagories.map(({id})=><h2 onClick={()=>this.props.loadQuistionsAction(id)} key={id}>{id}</h2>)
+            }
         </div> 
         );
     }
 }
- 
-export default ListPlayers;
+const mapStateToProps = state => {
+    return {
+        catagories : state.appReducer.catagories,
+    };
+  };
+  const matchDispatchToProps = dispatch => {
+    return bindActionCreators({ loadCatagoriesAction,loadQuistionsAction }, dispatch);
+  };
+  
+  export default connect(
+    mapStateToProps,
+    matchDispatchToProps
+  )(CatagoryList);
