@@ -21,12 +21,16 @@ class Create extends Component {
         // console.log(msg);
     };
     creatCode = (event)=>{
+        event.preventDefault();        
+        if(!this.state.showButton){
+            return false;
+        }
         let msg = {type:'set-code',msg:this.refs.codeInput.value}
         msg  = JSON.stringify(msg);
         const ws = getWebSocket();
         ws.send(msg);
-        event.preventDefault();
         this.props.chooseComponent('listPlayers');
+
     }
     showButtonFunction = ()=>{
         if(this.state.showButton === true) return <input className="btn btn-primary" type="submit"  value="Submit" />

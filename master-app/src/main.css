@@ -25,3 +25,8 @@ body {
     max-height: 250px;
     overflow-y:scroll;
 }
+.quistions:hover{
+    color:white;
+    background: #007bff;
+    border-radius: 5px;
+}

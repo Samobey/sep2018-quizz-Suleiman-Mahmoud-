@@ -3,12 +3,21 @@ import CatagoryList from "./CatagoryList";
 import Quistions from "./Quistions"
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import {loadCatagoriesAction} from "../actions/index"
+import {loadCatagoriesAction,chooseComponent} from "../actions/index"
+import {getWebSocket} from '../data/serverCommunication';
 
-class ListPlayers extends Component {
+class SetQuistions extends Component {
     constructor(props){
         super(props);
         this.props.loadCatagoriesAction();
+    }
+    startTheRound = ()=>{
+        // console.log(this.props.selectedQuistions);
+        let msg = {type:'start-the-round',quistions:this.props.selectedQuistions,me:'master'}
+        msg  = JSON.stringify(msg);
+        const ws = getWebSocket();
+        ws.send(msg);
+        this.props.chooseComponent('answer');
     }
     render() { 
         
@@ -18,7 +27,7 @@ class ListPlayers extends Component {
             <div className="col-sm-12 row">
                     <CatagoryList></CatagoryList>
                     <div className="float-right col-sm-4">
-                        <button className="btn btn-primary">Start the quizze</button>
+                        <button className="btn btn-primary" onClick={this.startTheRound}>Start the quizze</button>
                     </div>
             </div>
             <div className="float-right col-sm-4">
@@ -31,13 +40,14 @@ class ListPlayers extends Component {
 const mapStateToProps = state => {
     return {
       catagories : state.appReducer.catagories,
+      selectedQuistions:state.appReducer.selectedQuistions
     };
   };
   const matchDispatchToProps = dispatch => {
-    return bindActionCreators({ loadCatagoriesAction }, dispatch);
+    return bindActionCreators({ loadCatagoriesAction ,chooseComponent}, dispatch);
   };
   
   export default connect(
     mapStateToProps,
     matchDispatchToProps
-  )(ListPlayers);
+  )(SetQuistions);

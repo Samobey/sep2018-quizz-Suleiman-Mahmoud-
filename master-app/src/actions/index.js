@@ -21,6 +21,12 @@ export const addPlayer = player => {
     player
   };
 };
+export const addQuistion = id =>{
+  return {
+    type: "add-quistion",
+    id
+  }
+}
 export const loadCatagoriesAction = () => {
   return dispatch => {
     loadCatagories()
@@ -37,12 +43,17 @@ export const loadQuistionsAction = (catId) => {
     return dispatch => {
       loadQuistions(catId)
         .then(quistions => {
-          return dispatch({ type: "load-quistions", payload: quistions });
+          return dispatch({ type: "load-quistions", payload: quistions,id:catId });
         })
         .catch(err => {
           dispatch({ type: "err", payload: err });
         });
     };
   };
+  export const deleteTheLastCatagory = ()=>{
+    return {
+      type: "delete-the-last-catagory",
+    };
+  }
   
 

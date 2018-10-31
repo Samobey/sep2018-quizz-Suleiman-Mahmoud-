@@ -4,9 +4,11 @@ const initialState = {
   acceptedPlayers: [],
   allAccepted: false,
   catagories: [],
-  quistions:[],
+  quistions: [],
+  addCatagories: [],
+  selectedQuistions: []
 };
-let newState, players;
+let newState, players, quistions;
 export default function(state = initialState, action) {
   switch (action.type) {
     case "choose-component":
@@ -16,6 +18,14 @@ export default function(state = initialState, action) {
     case "load-catagories":
       newState = { ...state };
       newState.catagories = [...action.payload];
+      return newState;
+    case "add-quistion":
+      newState = { ...state };
+      if(newState.selectedQuistions.includes(action.id)){
+        newState.selectedQuistions = [...state.selectedQuistions.filter(element => element !== action.id)];
+      }else{
+        newState.selectedQuistions = [...state.selectedQuistions,action.id];
+      }
       return newState;
     case "accepted":
       newState = { ...state };
@@ -37,10 +47,19 @@ export default function(state = initialState, action) {
       newState.players = players;
       newState.allAccepted = newState.players.length === 0 ? true : false;
       return newState;
+    case "delete-the-last-catagory":
+      newState = { ...state };
+      let allCatagory = [...state.addCatagories.slice(0, 2)];
+      quistions = [...state.quistions.slice(0, 2)];
+      newState.quistions = quistions;
+      newState.addCatagories = allCatagory;
+      return newState;
     case "load-quistions":
       newState = { ...state };
-      let quistions = [...state.quistions,action.payload]; 
+      quistions = [...state.quistions, action.payload];
       newState.quistions = quistions;
+      let addCatagories = [...state.addCatagories, action.id];
+      newState.addCatagories = addCatagories;
       return newState;
     case "add-player":
       let newPlayer = [...state.players];
