@@ -15,9 +15,10 @@ class Quistions extends Component {
         {
             this.props.quistions.map((quistionGroup)=>{
             return (
-            <div key={quistionGroup[0].catId} className="m-1 border border-primary col-sm-12 row">
-                <h2 className="col-sm-12 text-center" key={quistionGroup[0].catId}>{quistionGroup[0].catId}</h2>
-                {quistionGroup.map(quistion=><span className={this.addClassToQuistion(quistion.id)} onClick={this.addToQuistionList} key={quistion.id} id={quistion.id}>{quistion.quistion}</span>)}
+            <div key={quistionGroup[0].category} className="m-1 border border-primary col-sm-12 row">
+                <h4 className="text-center">choose 12 question!</h4>
+                <h2 className="col-sm-12 text-center" key={quistionGroup[0].category}>{quistionGroup[0].category}</h2>
+                {quistionGroup.map(quistion=><span className={this.addClassToQuistion(quistion._id)} onClick={this.addToQuistionList} key={quistion._id} id={quistion._id}>{quistion.question}</span>)}
             </div>)
         })}
         </div> 

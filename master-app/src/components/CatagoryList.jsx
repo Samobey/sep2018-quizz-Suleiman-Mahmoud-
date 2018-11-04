@@ -7,12 +7,11 @@ class CatagoryList extends Component {
     addQuistionsToList = (event)=>{
         event.preventDefault();
         const id = event.target.id;
-        let notAdded = this.props.addCatagories.indexOf(id);
-        // console.log(this.props.quistions);
+        let notAdded = this.props.addCatagories.indexOf(element => element._id = id);
+        console.log(notAdded);
         if(notAdded === -1){
             this.props.loadQuistionsAction(id);
         }
-        
         if(this.props.addCatagories.length > 2){
             this.props.deleteTheLastCatagory();
         }
@@ -22,7 +21,7 @@ class CatagoryList extends Component {
         return ( 
         <div className="border border-primary list col-sm-8">
             {
-                this.props.catagories.map(({id})=><h2 key={id} className={this.checkTheClass(id)}><a href="#" id={id} onClick={this.addQuistionsToList} >{id}</a></h2>)
+                this.props.catagories.map(({_id})=><h2 key={_id} className={this.checkTheClass(_id)}><a href="#" id={_id} onClick={this.addQuistionsToList} >{_id}</a></h2>)
             }
         </div> 
         );

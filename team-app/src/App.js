@@ -1,28 +1,41 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
+import Empty from "./components/empty.jsx";
+import Entry from "./components/entry";
+import Join from "./components/join";
+import Question from "./components/question";
+import { connect } from "react-redux";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      components: {
+        empty: <Empty />,
+        entry: <Entry />,
+        join: <Join />,
+        question: <Question />
+      }
+    };
+  }
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <div
+          className="container border mt-5
+        pb-5"
+        >
+          {this.state.components[this.props.component]}
+        </div>
       </div>
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    component: state.component
+  };
+};
 
-export default App;
+export default connect(mapStateToProps)(App);

@@ -1,13 +1,48 @@
 import { loadCatagories,loadQuistions } from "../data/asyncData";
 import Quistions from "../components/Quistions";
 
+export const increesQuistionsNumber = ()=>{
+  return {
+    type:'increes-quistion-number',
+  }
+}
+export const addAnswer = (teamId,answer)=>{
+  return {
+    type:'add-answer',
+    teamId,
+    answer,
+  }
+}
+export const deleteAnswer = (teamId)=>{
+  return {
+    type:"delete-answer",
+    teamId
+  }
+}
+export const changeQuistionclosedState = (questionClosed)=>{
+  return {
+    type:"question-closed-state",
+    questionClosed
+  }
+}
+export const setQuizzeCode = (quizzerCode)=>{
+  return {
+    type:'set-code',
+    quizzerCode
+  }
+}
 export const chooseComponent = component => {
   return {
     type: "choose-component",
     component
   };
 };
-
+ 
+export const newRound = ()=>{
+  return{
+    type:"new-round"
+  }
+}
 export const acceptOrReject = (id, status) => {
   return {
     type: status,

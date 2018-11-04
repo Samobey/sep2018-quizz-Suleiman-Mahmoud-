@@ -17,3 +17,17 @@ export async function loadQuistions(catId) {
   const json = respons.json();
   return json;
 }
+export async function sendQuistions(quizzerId,roundNumber,quistions) {
+    let sendingBody = JSON.stringify({quizzerId,roundNumber,quistions})
+    const url = "http://localhost:4000/quistions" ;
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: sendingBody
+    });
+    if (response.status !== 200) {
+      throw new Error(`HTTP PUT request went wrong: got "${response.statusText}" for "${url}"`)
+    }
+}

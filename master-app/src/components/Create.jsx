@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import {chooseComponent} from "../actions/index"
+import {chooseComponent,setQuizzeCode} from "../actions/index"
 import { openWebSocket, getWebSocket} from '../data/serverCommunication';
 
 class Create extends Component {
@@ -18,17 +18,17 @@ class Create extends Component {
         if(typeof msg !== "string") {
           msg = JSON.stringify(msg);
         }
-        // console.log(msg);
+        console.log(msg);
     };
     creatCode = (event)=>{
-        event.preventDefault();        
-        if(!this.state.showButton){
-            return false;
-        }
+
+        event.preventDefault();  
+       
         let msg = {type:'set-code',msg:this.refs.codeInput.value}
         msg  = JSON.stringify(msg);
         const ws = getWebSocket();
         ws.send(msg);
+        this.props.setQuizzeCode(this.refs.codeInput.value);
         this.props.chooseComponent('listPlayers');
 
     }
@@ -63,7 +63,7 @@ class Create extends Component {
     };
   };
   const matchDispatchToProps = dispatch => {
-    return bindActionCreators({ chooseComponent }, dispatch);
+    return bindActionCreators({ chooseComponent ,setQuizzeCode}, dispatch);
   };
   
   export default connect(

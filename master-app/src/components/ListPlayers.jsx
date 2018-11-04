@@ -33,6 +33,9 @@ class ListPlayers extends Component {
         event.preventDefault();
         this.props.chooseComponent('setQuistions');
     }
+    start = ()=>{
+        this.props.chooseComponent('setQuistions');        
+    }
     render() { 
         
         return ( 
@@ -46,7 +49,7 @@ class ListPlayers extends Component {
                 this.props.allAccepted === false ?
                 (<button onClick={this.acceptAll} className="mr btn btn-primary">Accept all & Start!</button>)
                 :
-                (<button className="btn btn-dark">Start!</button>)
+                (<button onClick={this.start} className="btn btn-dark">Start!</button>)
                 }
             </div>
         </div> );
