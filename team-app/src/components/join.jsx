@@ -1,4 +1,3 @@
-import ListTeam from "./listTeam";
 import React, { Component } from "react";
 import { changeComponent } from "../actions";
 import { connect } from "react-redux";
@@ -9,9 +8,9 @@ class Join extends Component {
     super(props);
     this.state = { coolWarning: false,error:false };
     let ws = getWebSocket();
-    ws.onerror = () => this.addMessage("WebSocket error");
-    ws.onopen = () => this.addMessage("WebSocket connectn established");
-    ws.onclose = () => this.addMessage("WebSocket connection closed");
+    ws.onerror = () => console.log("WebSocket error");
+    ws.onopen = () => console.log("WebSocket connectn established");
+    ws.onclose = () => console.log("WebSocket connection closed");
     ws.onmessage = msg => {
       msg = JSON.parse(msg.data);
       console.log(msg.type);
@@ -23,12 +22,6 @@ class Join extends Component {
           this.setState({error:true});
       }
     }
-  }
-  addMessage(msg) {
-    if (typeof msg !== "string") {
-      msg = JSON.stringify(msg);
-    }
-    console.log(msg);
   }
 
   sendname = event => {
@@ -60,7 +53,6 @@ class Join extends Component {
         </h1>
         <div className="row">
           <div className="col-7">
-            <ListTeam />
           </div>
 
           <div className="col-3">

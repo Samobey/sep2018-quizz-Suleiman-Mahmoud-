@@ -15,9 +15,24 @@ app.use(cors());
 app.use(bodyParser.json());
 // app.use( bodyParser.text() );
 let selectedQuistios;
-app.get("/test",(req,res)=>{
-  
- 
+// app.get("/test/:quizzerId", (req, res) => {});
+app.get("/getResults/:quizzerId", (req, res) => {
+  let quizzerId = req.params.quizzerId;
+  QuizzerSchema.findOne({ _id: quizzerId })
+  .then(quizzer => {
+    if (quizzer) {
+      let AllScores = [];
+      quizzer.teams.forEach(team => {
+        AllScores.push({
+          name: team.name,
+          round1: team.correctAnswers.filter(answer => answer == 1).length,
+          round2: team.correctAnswers.filter(answer => answer == 2).length, 
+          round3: team.correctAnswers.filter(answer => answer == 3).length 
+        });
+      }); 
+      res.json(AllScores);  
+    }
+  });
 });
 app.get("/catagories", (req, res) => {
   CategorySchema.find()
@@ -46,14 +61,16 @@ app.get("/quistions/:catId", (req, res) => {
 app.get("/question/:quizzerId/:quistionNumber/", (req, res) => {
   let quistionNumber = req.params.quistionNumber;
   let quizzerId = req.params.quizzerId;
-  QuizzerSchema.findOne({ _id: quizzerId })
+  QuizzerSchema.findById({ _id: quizzerId })
     .then(quizzer => {
-      let quistionId = quizzer.rounds[0].questions[quistionNumber];
-      QuestionSchema.findOne(mongoose.Types.ObjectId(quistionId)).then(
+      if(quizzer){  
+        let quistionId = quizzer.question[quistionNumber]
+        QuestionSchema.findById({_id: mongoose.Types.ObjectId(quistionId)}).then(
         quistion => {
-          res.json(quistion.question);
-        }
-      );
+          res.json(quistion);
+        } 
+      ); 
+      }
     })
     .catch(err => console.log(err));
 });
@@ -62,20 +79,17 @@ app.put("/quistions", (req, res) => {
   if (req.body) {
     selectedQuistios = req.body.quistions;
     let quizzerId = req.body.quizzerId;
-    let roundNumber = req.body.roundNumber;
     QuizzerSchema.findOne({ _id: quizzerId })
       .then(quizzer => {
         if (quizzer) {
-          quizzer.rounds.push({
-            _id: roundNumber,
-            questions: selectedQuistios
-          });
+          quizzer.question = selectedQuistios;
           quizzer.save();
+          res.json(quizzer.question);
         }
       })
       .catch(err => console.log(err));
   }
-  res.json({ ok: true });
+  // res.json({ ok: true });
 });
 const httpServer = http.createServer(app);
 const websocketServer = new WebSocket.Server({
@@ -104,22 +118,41 @@ websocketServer.on("connection", (socket, req) => {
         socket.code = inCommingMessage.msg;
         id++;
         break;
+      case "add-me-score-board":
+        QuizzerSchema.findOne({ _id: inCommingMessage.code })
+          .then(quizzer => {
+            if (quizzer) {
+              sendingMessage = { type: "code-accepted" };
+              socket.id = id;
+              socket.code = inCommingMessage.code;
+              quizzer.scoreBoard = id;
+              quizzer.save();
+            } else {
+              sendingMessage = { type: "code-not-accepted" };
+            }
+            sendingMessage = JSON.stringify(sendingMessage);
+            socket.send(sendingMessage);
+            id++;
+          })
+          .catch(err => console.log(err));
+        break;
       case "send-answer":
         QuizzerSchema.findOne({ _id: socket.code })
           .then(quizzer => {
             if (quizzer) {
               let masterId = quizzer.master;
+              let scoreBoardId = quizzer.scoreBoard;
 
               sendingMessage = {
                 type: "get-answer",
                 teamId: socket.id,
-                answer: inCommingMessage.msg
+                answer: inCommingMessage.msg,
+                name: socket.name
               };
               sendingMessage = JSON.stringify(sendingMessage);
               websocketServer.clients.forEach(client => {
-                if (client.id == masterId) {
+                if (client.id == masterId || client.id == scoreBoardId) {
                   client.send(sendingMessage);
-                  return;
                 }
               });
             }
@@ -130,11 +163,14 @@ websocketServer.on("connection", (socket, req) => {
         QuizzerSchema.findOne({ _id: socket.code }).then(quizzer => {
           if (quizzer) {
             let teams = quizzer.teams;
-            console.log("sdfsdfdsf", teams);
+            let scoreBoardId = quizzer.scoreBoard;
             sendingMessage = { type: "question-closed" };
             sendingMessage = JSON.stringify(sendingMessage);
             websocketServer.clients.forEach(client => {
-              if (teams.find(team => team.id == client.id)) {
+              if (
+                teams.find(team => team.id == client.id) ||
+                client.id == scoreBoardId
+              ) {
                 client.send(sendingMessage);
               }
             });
@@ -147,11 +183,13 @@ websocketServer.on("connection", (socket, req) => {
             if (quizzer) {
               sendingMessage = {
                 type: "get-quistion",
-                quistionNumber: inCommingMessage.quistionNumber
+                quistionNumber: inCommingMessage.quistionNumber,
+                roundNumber: inCommingMessage.roundNumber,
               };
               sendingMessage = JSON.stringify(sendingMessage);
               websocketServer.clients.forEach(client => {
-                if (quizzer.teams.find(team => team.id == client.id)) {
+                if (quizzer.teams.find(team => team.id == client.id ||client.id == quizzer.scoreBoard)) {
+                  console.log('send');
                   client.send(sendingMessage);
                 }
               });
@@ -219,14 +257,27 @@ websocketServer.on("connection", (socket, req) => {
 
         break;
       case "accept-the-answer":
-         QuizzerSchema.findOne({ _id: socket.code })
+        QuizzerSchema.findOne({ _id: socket.code })
           .then(quizzer => {
             if (quizzer) {
-              let teamIndex = quizzer.teams.findIndex((team)=>team.id = inCommingMessage.teamId);
-              if(teamIndex !== -1){
-                quizzer.teams[teamIndex].correctAnswers.push(inCommingMessage.roundNumber)
+              let teamIndex = quizzer.teams.findIndex(
+                team => team._id == inCommingMessage.teamId
+              );
+              console.log(teamIndex);
+              if (teamIndex !== -1) {
+                quizzer.teams[teamIndex].correctAnswers.push(
+                  inCommingMessage.roundNumber
+                );
                 quizzer.save();
-                console.log('accept the answer',quizzer.teams[teamIndex].correctAnswers);
+                let scoreBoardId = quizzer.scoreBoard;
+                sendingMessage = {
+                  type: "accept-the-answer",
+                  teamId: inCommingMessage.teamId
+                };
+                sendingMessage = JSON.stringify(sendingMessage);
+                websocketServer.clients.forEach(client => {
+                  if (client.id == scoreBoardId) client.send(sendingMessage);
+                });
               }
             }
           })
@@ -253,8 +304,25 @@ websocketServer.on("connection", (socket, req) => {
           })
           .catch(err => console.log(err));
         break;
-      case "reject-the-answer":
+      case "finish-the-quizze":
+      QuizzerSchema.findOne({ _id: socket.code })
+      .then(quizzer => {
+        if (quizzer) {
+          let scoreBoardId = quizzer.scoreBoard;
+          sendingMessage = {
+            type: "get-results",
+          };
+          sendingMessage = JSON.stringify(sendingMessage);
+          websocketServer.clients.forEach(client=>{
+            if(client.id == scoreBoardId ){
+              client.send(sendingMessage);
+            }
+          })
+
+        }}).catch(err=>console.log(err))
       break;
+      case "reject-the-answer":
+        break;
 
       case "rejected":
         clienId = inCommingMessage.id;

@@ -7,7 +7,7 @@ class Quistions extends Component {
     addToQuistionList = (event)=>{
         this.props.addQuistion(event.target.id);
     }
-    addClassToQuistion = (id)=>this.props.selectedQuistions.includes(`${id}`) ? "alert alert-success":"col-sm-3 quistions"
+    addClassToQuistion = (id)=>this.props.selectedQuistions.includes(`${id}`) ? "bg-success":"col-sm-3 quistions"
     render() { 
         console.log('from component',this.props.selectedQuistions.includes('1'),this.props.selectedQuistions)
         return ( 

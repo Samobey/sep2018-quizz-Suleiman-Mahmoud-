@@ -1,7 +1,6 @@
 const initState = {
   component: "entry",
-  text: "wait for the next quiztion",
-  question: "Wait for the question",
+  question: "See the question in the score board",
   teams: ["team 1"],
   showActionForm: false,
   quizzerId: 0
@@ -23,8 +22,6 @@ const rootReducer = (state = initState, action) => {
       return newState;
     case "load_question":
       newState = { ...state };
-      let question = action.payload;
-      newState.question = question;
       newState.showActionForm = true;
       console.log(newState.question);
       return newState;

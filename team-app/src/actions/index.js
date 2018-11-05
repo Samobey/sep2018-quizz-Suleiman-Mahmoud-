@@ -33,13 +33,7 @@ export const loadTeamsAction = () => {
   };
 };
 export const loadQuestionAction = (quistionsnumber,quizzerId) => {
-  return dispatch => {
-    loadquestion(quistionsnumber,quizzerId)
-      .then(question => {
-        return dispatch({ type: "load_question", payload: question });
-      })
-      .catch(err => {
-        dispatch({ type: "err", payload: err });
-      });
-  };
+  
+        return { type: "load_question"};
+    
 };

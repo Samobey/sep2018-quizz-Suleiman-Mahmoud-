@@ -19,6 +19,7 @@ class Answers extends Component {
       let msg = {
         type: "send-quistion",
         quistionNumber: this.props.quistionNumber,
+        roundNumber : this.props.roundNumber,
       };
       msg = JSON.stringify(msg);
       this.props.increesQuistionsNumber();
@@ -35,6 +36,15 @@ class Answers extends Component {
           ws.send(msg);
       this.props.changeQuistionclosedState(true);  
     }else{
+      // let msg = {
+      //   type: "send-quistion",
+      //   quistionNumber: this.props.quistionNumber,
+      // };
+      // msg = JSON.stringify(msg);
+      // this.props.increesQuistionsNumber();
+      // const ws = getWebSocket();
+      // ws.send(msg);
+
       this.props.chooseComponent('round');
     }
   };
@@ -66,6 +76,7 @@ const mapStateToProps = state => {
     answers: state.appReducer.answers,
     questionClosed: state.appReducer.questionClosed,
     quistionNumber: state.appReducer.quistionNumber,
+    roundNumber:state.appReducer.roundNumber
     
   };
 };

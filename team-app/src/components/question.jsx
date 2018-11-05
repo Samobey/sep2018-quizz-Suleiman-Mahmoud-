@@ -9,9 +9,9 @@ class Question extends Component {
     super(props);
     this.state = { funnyText: false };
     let ws = getWebSocket();
-    ws.onerror = () => this.addMessage("WebSocket error");
-    ws.onopen = () => this.addMessage("WebSocket connectn established");
-    ws.onclose = () => this.addMessage("WebSocket connection closed");
+    ws.onerror = () => console.log("WebSocket error");
+    ws.onopen = () => console.log("WebSocket connectn established");
+    ws.onclose = () => console.log("WebSocket connection closed");
     ws.onmessage = msg => {
       msg = JSON.parse(msg.data);
       console.log(msg.type);
@@ -28,13 +28,7 @@ class Question extends Component {
       }
     };
   }
-  addMessage(msg) {
-    if (typeof msg !== "string") {
-      msg = JSON.stringify(msg);
-    }
-    console.log(msg);
-    return msg;
-  }
+  
   changeText = event => {
     event.preventDefault();
     this.props.displayText("wait for the next quistion!");

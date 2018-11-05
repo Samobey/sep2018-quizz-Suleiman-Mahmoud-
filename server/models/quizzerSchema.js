@@ -9,15 +9,9 @@ const quizzerSchema = new mongoose.Schema({
       _id: String,
       name: String,
       totaleScore: Number,
-      rounds: [{ roundNumber: Number, roundScore: Number }],
-      correctAnswers : [Number]
+      correctAnswers : [Number] 
     }
-  ],
-  rounds: [
-    {
-      _id: Number,
-      questions: []
-    }
-  ]
+  ], 
+  question: [String] 
 });
 module.exports = mongoose.model("quizzer", quizzerSchema);

@@ -26,6 +26,7 @@ class SetQuistions extends Component {
         let msg = {
           type: "send-quistion",
           quistionNumber: this.props.quistionNumber,
+          roundNumber : this.props.roundNumber,
         };
         msg = JSON.stringify(msg);
         this.props.increesQuistionsNumber();
